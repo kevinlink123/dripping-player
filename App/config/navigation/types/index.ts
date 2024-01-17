@@ -1,0 +1,1 @@
+export * from './RootBottomTabsNavigator.type';
