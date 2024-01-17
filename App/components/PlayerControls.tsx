@@ -35,10 +35,10 @@ export default function PlayerControls() {
         setSoundObj,
         soundObj,
         setCurrentAudioFile,
-        audioFiles,
     } = useContext(AudioContext);
 
     const currentAudioFile = useSelector((state: RootState) => state.audioFiles.currentAudioFile);
+    const audioFiles = useSelector((state: RootState) => state.audioFiles.audioFiles);
 
     const play = async () => {
         if (soundObj.isLoaded && !soundObj.isPlaying) {

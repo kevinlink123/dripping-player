@@ -4,7 +4,10 @@ import DocumentPicker, { DirectoryPickerResponse } from 'react-native-document-p
 import colors from "../constants/colors";
 import charParse from "../constants/charParse";
 import PlaylistService from "../utils/services/Playlist.service";
-import { AudioContext } from "../utils/context/AudioProvider";
+
+import { setAudioFiles } from "../store/audioFiles/audioFilesSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
 
 const parseUri = (uri: string) => {
     const folderStartIndex = uri.indexOf("%3A") + 3;
@@ -43,7 +46,7 @@ const styles = StyleSheet.create({
 
 export default function EmptyAudioList() {
 
-    const { setAudioFiles } = useContext(AudioContext);
+    const dispatch = useDispatch<AppDispatch>();
 
     const pickFolder = async () => {
         try {
@@ -51,7 +54,7 @@ export default function EmptyAudioList() {
             const parsedUri = parseUri(result!.uri);
             await PlaylistService.saveNewMusicDirectory(parsedUri);
             
-            setAudioFiles();
+            dispatch(setAudioFiles());
         } catch(e: any) {
             console.log(e);
         }

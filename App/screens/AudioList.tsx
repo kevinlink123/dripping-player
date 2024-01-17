@@ -30,14 +30,14 @@ const styles = StyleSheet.create({
 
 export default function AudioList() {
     const {
-        audioFiles,
         playbackObj,
         soundObj,
         setCurrentAudioFile,
         setSoundObj,
     } = useContext(AudioContext);
 
-    const isLoading = useSelector((state: RootState) => state.playState.isLoading);
+    const isLoading = useSelector((state: RootState) => state.audioFiles.isLoading);
+    const audioFiles = useSelector((state: RootState) => state.audioFiles.audioFiles);
 
     const dispatch = useDispatch<AppDispatch>();
 

@@ -12,8 +12,9 @@ import PlaylistService from "../services/Playlist.service";
 import * as Notifications from "expo-notifications";
 import { connect } from "react-redux";
 import { AppDispatch } from "../../store/store";
-import { setLoading, updateAudioProgress } from "../../store/playback/playbackSlice";
-import { setCurrentAudioFile } from "../../store/audioFiles/audioFilesSlice";
+import { updateAudioProgress } from "../../store/playback/playbackSlice";
+import { setLoading } from "../../store/audioFiles/audioFilesSlice";
+import { setAudioFiles, setCurrentAudioFile } from "../../store/audioFiles/audioFilesSlice";
 
 type AudioProviderProps = {
     children: any;
@@ -23,17 +24,14 @@ type AudioProviderProps = {
 type AudioProviderState = {
     playbackObj: Audio.Sound;
     soundObj: AVPlaybackStatus | AVPlaybackStatusSuccess;
-    audioFiles: MediaLibrary.Asset[];
     permissionError: boolean;
 };
 
 type AudioContextType = {
     playbackObj: Audio.Sound;
     soundObj: AVPlaybackStatus | AVPlaybackStatusSuccess;
-    audioFiles: MediaLibrary.Asset[];
     setCurrentAudioFile: (audio: MediaLibrary.Asset) => void;
     setSoundObj: (status: AVPlaybackStatus | AVPlaybackStatusSuccess) => void;
-    setAudioFiles: () => void;
 };
 
 export const AudioContext = createContext<AudioContextType>(
@@ -46,7 +44,6 @@ class AudioProviderClass extends Component<
     constructor(props: AudioProviderProps) {
         super(props);
         this.state = {
-            audioFiles: [],
             permissionError: false,
             playbackObj: new Audio.Sound(),
             soundObj: {} as AVPlaybackStatus,
@@ -90,11 +87,6 @@ class AudioProviderClass extends Component<
             return musicFolders.some((folder) => asset.uri.includes(folder));
         });
 
-        this.setState({
-            ...this.state,
-            audioFiles: filteredAudioFiles,
-        });
-
         this.props.dispatch(setLoading(false));
     };
 
@@ -103,7 +95,7 @@ class AudioProviderClass extends Component<
 
         if (permission.granted) {
             // Get all the audio files
-            this.setAudioFiles();
+            this.props.dispatch(setAudioFiles());
         }
 
         if (!permission.canAskAgain && !permission.granted) {
@@ -122,7 +114,7 @@ class AudioProviderClass extends Component<
 
             if (status === "granted") {
                 // Get all the audio files after permission are being granted from the user
-                this.setAudioFiles();
+                this.props.dispatch(setAudioFiles());
             }
 
             if (status === "denied" && !canAskAgain) {
@@ -233,12 +225,10 @@ class AudioProviderClass extends Component<
         return (
             <AudioContext.Provider
                 value={{
-                    audioFiles: this.state.audioFiles,
                     playbackObj: this.state.playbackObj,
                     soundObj: this.state.soundObj,
                     setCurrentAudioFile: this.setCurrentAudioFile,
                     setSoundObj: this.setSoundObj,
-                    setAudioFiles: this.setAudioFiles,
                 }}
             >
                 {this.props.children}

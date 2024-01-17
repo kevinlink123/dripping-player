@@ -52,8 +52,9 @@ export default function GlobalPlayerController() {
         setSoundObj,
         soundObj,
         setCurrentAudioFile,
-        audioFiles
     } = useContext(AudioContext);
+
+    const audioFiles = useSelector((state: RootState) => state.audioFiles.audioFiles);
 
     const currentAudioFile = useSelector((state: RootState) => state.audioFiles.currentAudioFile);
     const dispatch = useDispatch();
